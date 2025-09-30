@@ -1,26 +1,33 @@
-import React from "react";
+"use client";
 
-export function Header(){
-    return (
-        <header className='bg-white p-4 border-b border-gray-200'>
-                <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
-                    <div className='flex items-center gap-4'>
-                        <div className='bg-blue-500 p-2 rounded-md'>
-                            <svg className='w-6 h-6 text-white' 
-                            fill='none' 
-                            stroke="currentColor" 
-                            viewBox="0 0 24 24" 
-                            xmlns="http://www.w3.org/2000/svg"><path 
-                            strokeLinecap="round" 
-                            strokeLinejoin="round" 
-                            strokeWidth={2} d="M4 7v10c0 1.1.9 2 2 2h12a2 2 0 002-2V7M16 3h-8a2 2 0 00-2 2v2h12V5a2 2 0 00-2-2z" />
-                            </svg>
-                        </div>
-                        <h1 className='text-xl font-semibold text-gray-800'>
-                            Aluguel Máquinas
-                        </h1>
-                    </div>
-                </div>
-            </header>
-    );
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { Menu } from "lucide-react";
+import Sidebar from "./Sidebar";
+
+export default function Header() {
+  return (
+    <header className="fixed top-0 left-0 right-0 z-10 h-16 bg-white border-b shadow-sm">
+      
+      <div className="absolute top-0 left-0 h-16 flex items-center pl-4 z-20">
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="outline" size="icon">
+              <Menu className="h-6 w-6" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-80 bg-zinc-900 text-white border-zinc-800 p-0">
+            <Sidebar />
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      <div className="flex items-center h-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <p className="font-bold text-xl">
+          Aluguel de Máquinas
+        </p>
+      </div>
+
+    </header>
+  );
 }

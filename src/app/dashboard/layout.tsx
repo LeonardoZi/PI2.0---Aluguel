@@ -1,14 +1,18 @@
-import React from 'react';
-import {Header} from '@/components/Header';
+import Header from "@/components/Header";
 
-
-export default function DashboardLayout({children}: {children: React.ReactNode;}) {
-    return (
-        <div className='min-h-screen bg-gray-50'>
-            <Header />
-            <main className='mx-auto max-w-7xl py-6 sm:px-6 lg:px-8'>
-                {children}
-            </main>
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex min-h-screen flex-col bg-zinc-50">
+      <Header />
+      <main className="flex-1 pt-16">
+        <div className="max-w-7xl w-full mx-auto p-8">
+          {children}
         </div>
-    );
+      </main>
+    </div>
+  );
 }

@@ -44,7 +44,6 @@ export default function RegisterPage() {
 
     return (
         <div className='bg-gray-100 min-h-screen'>
-            <Header/>
             <form onSubmit={handleSubmit} className='text-black select-none bg-white' style={{
             border: "2px solid black",
             borderColor: "black",
