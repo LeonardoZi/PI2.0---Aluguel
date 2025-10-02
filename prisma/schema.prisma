@@ -21,13 +21,13 @@ model Colaborador {
 }
 
 // modelo máquinas
-model Maquina {
+model Produto {
   id String @id @default(cuid())
   name String
   description String?
   imageurl String?
   pricePerDay Float
-  status MachineStatus @default(DISPONIVEL)
+  status ProdutoStatus @default(DISPONIVEL)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -56,18 +56,17 @@ model Aluguel {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  maquinaId String
-  maquina Maquina @relation(fields: [maquinaId], references: [id])
+  produtoId String
+  produto Produto @relation(fields: [produtoId], references: [id])
 
   clienteId String
   cliente Cliente @relation(fields: [clienteId], references: [id])
 }
 
-enum MachineStatus {
+enum ProdutoStatus {
   DISPONIVEL
-  ALUGADA
-  RESERVADA
-  EM_MANUTENCAO
+  ALUGADO
+  RESERVADO
 }
 
 enum RentalStatus{

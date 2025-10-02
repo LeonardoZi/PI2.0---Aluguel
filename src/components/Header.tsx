@@ -24,7 +24,7 @@ export default function Header() {
 
       <div className="flex items-center h-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <p className="font-bold text-xl">
-          Aluguel de Máquinas
+          Aluguel de Produtos
         </p>
       </div>
 
