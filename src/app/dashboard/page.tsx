@@ -1,6 +1,6 @@
 import prisma from '@/lib/prisma';
 import KpiCard from '@/components/KpiCard';
-import { Briefcase, CheckCircle, Clock, Cog, DollarSign, Users, FileText, Truck, Archive } from 'lucide-react';
+import { CheckCircle, Clock, Cog, DollarSign, Users, FileText, Truck, Archive } from 'lucide-react';
 import {
   Carousel,
   CarouselContent,
