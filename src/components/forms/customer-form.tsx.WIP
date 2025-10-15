@@ -1,0 +1,63 @@
+// src/components/forms/customer-form.tsx
+"use client";
+
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+
+// O schema de validação continua o mesmo
+const customerSchema = z.object({
+  name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
+  email: z.string().email("E-mail inválido"),
+  phone: z.string().min(10, "Telefone deve ter pelo menos 10 dígitos").regex(/^\d+$/, "Telefone deve conter apenas números"),
+  document: z.string().min(11, "CPF/CNPJ deve ter pelo menos 11 dígitos"),
+  type: z.enum(["personal", "business"]),
+  address: z.object({
+    street: z.string().min(3, "Rua é obrigatória"),
+    number: z.string().min(1, "Número é obrigatório"),
+    complement: z.string().optional(),
+    neighborhood: z.string().min(2, "Bairro é obrigatório"),
+    city: z.string().min(2, "Cidade é obrigatória"),
+    state: z.string().min(2, "Estado é obrigatório"),
+    zipCode: z.string().min(8, "CEP deve ter 8 dígitos"),
+  }),
+  notes: z.string().max(500, "Observações não podem exceder 500 caracteres").optional(),
+  isActive: z.boolean().default(true),
+});
+
+type CustomerFormValues = z.infer<typeof customerSchema>;
+
+interface CustomerFormProps {
+  initialData?: Partial<CustomerFormValues>;
+  onSubmit: (data: CustomerFormValues) => void | Promise<void>;
+  onCancel?: () => void;
+  isLoading?: boolean;
+}
+
+export function CustomerForm({
+  initialData,
+  onSubmit,
+  onCancel,
+  isLoading = false,
+}: CustomerFormProps) {
+  const form = useForm<CustomerFormValues>({
+    resolver: zodResolver(customerSchema),
+    defaultValues: {
+      name: "", email: "", phone: "", document: "", type: "personal",
+      address: { street: "", number: "", complement: "", neighborhood: "", city: "", state: "", zipCode: "" },
+      notes: "", isActive: true,
+      ...initialData,
+    },
+  });
+
+  const customerType = form.watch("type");
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className
