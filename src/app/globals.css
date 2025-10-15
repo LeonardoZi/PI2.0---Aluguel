@@ -321,3 +321,15 @@ h6 {
     @apply bg-background text-foreground;
   }
 }
+
+label {
+  user-select: none;
+}
+
+::placeholder {
+  user-select: none;
+}
+
+body {
+  user-select: none;
+}

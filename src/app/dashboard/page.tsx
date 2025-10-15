@@ -1,7 +1,6 @@
-//import prisma from '@/lib/prisma';
+import prisma from '@/lib/prisma';
 import KpiCard from '@/components/KpiCard';
-import { Briefcase, CheckCircle, Clock, Cog, DollarSign, Users, FileText, Truck } from 'lucide-react';
-import { Card, CardContent } from "@/components/ui/card"
+import { Briefcase, CheckCircle, Clock, Cog, DollarSign, Users, FileText, Truck, Archive } from 'lucide-react';
 import {
   Carousel,
   CarouselContent,
@@ -12,20 +11,44 @@ import {
 import ModuleCard from '@/components/ModuleCard';
 
 async function getDashboardStats() {
-    try {
-        const [receitaMensal, maquinasAgendadas, maquinasEmManutencao, totalMaquinas, proximasDevolucoes] = await Promise.all([
-            prisma.aluguel.aggregate({ _sum: { totalPrice: true }, where: { status: "CONCLUIDO", endDate: { gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1) } } }),
-            prisma.aluguel.count({ where: { status: "AGENDADO" } }),
-            prisma.maquina.count({ where: { status: "EM_MANUTENCAO" } }),
-            prisma.maquina.count(),
-            prisma.aluguel.findMany({ where: { status: 'ATIVO', endDate: { gte: new Date(), lte: new Date(new Date().setDate(new Date().getDate() + 7)) } }, include: { maquina: { select: { name: true } } }, orderBy: { endDate: 'asc' } })
-        ]);
-        const contasAPagar = 0;
-        return { receitaMensal: receitaMensal._sum.totalPrice || 0, contasAPagar, totalMaquinas, maquinasAgendadas, maquinasEmManutencao, proximasDevolucoes };
-    } catch (error) {
-        console.error("Erro ao buscar estatísticas do dashboard:", error);
-        return { receitaMensal: 0, contasAPagar: 0, totalMaquinas: 0, maquinasAgendadas: 0, maquinasEmManutencao: 0, proximasDevolucoes: [] };
-    }
+  try {
+    const [
+      receitaMensal,
+      totalEmEstoque,
+      alugueisAtivos,
+    ] = await Promise.all([
+      // A lógica de receita mensal provavelmente continua válida.
+      prisma.aluguel.aggregate({ 
+        _sum: { totalPrice: true }, 
+        where: { 
+          status: "CONCLUIDO", 
+          endDate: { gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1) } 
+        } 
+      }),
+
+      prisma.produto.aggregate({
+        _sum: { estoque: true }
+      }),
+
+      prisma.aluguel.count({
+        where: { status: 'ATIVO' }
+      }),
+    ]);
+
+    return { 
+      receitaMensal: receitaMensal._sum.totalPrice || 0,
+      totalEmEstoque: totalEmEstoque._sum.estoque || 0,
+      alugueisAtivos: alugueisAtivos || 0,
+    };
+
+  } catch (error) {
+    console.error("Erro ao buscar estatísticas do dashboard:", error);
+    return { 
+      receitaMensal: 0, 
+      totalEmEstoque: 0, 
+      alugueisAtivos: 0,
+    };
+  }
 }
 
 const modulesData = [
@@ -47,16 +70,9 @@ export default async function DashboardPage() {
         <h1 className="text-3xl font-bold">Painel de Controle</h1>
       </div>
 
-      {/* ====================================================================== */}
-      {/* A CORREÇÃO DO LAYOUT ESTÁ AQUI. A ESTRUTURA FOI REORGANIZADA. */}
-      {/* Este é o container principal que cria as duas colunas. */}
-      {/* ====================================================================== */}
       <div className="flex flex-col lg:flex-row gap-8">
-
-        {/* --- COLUNA DA ESQUERDA (KPIs + Módulos) --- */}
         <div className="w-full lg:w-8/12 flex flex-col gap-8">
           
-          {/* Seus cards de info rápida, exatamente como você os deixou */}
           <section>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <KpiCard
@@ -66,19 +82,18 @@ export default async function DashboardPage() {
                 formatAsCurrency={true}
               />
               <KpiCard
-                title="Total de Máquinas" // Você pode alterar para "Total de Produtos" aqui
-                value={stats.totalMaquinas}
-                icon={<Cog size={24} />}
+                title="Total em Estoque (un)"
+                value={stats.totalEmEstoque}
+                icon={<Archive size={24} />}
               />
               <KpiCard
-                title="Aguardando devolução"
-                value={stats.produtosDevolucao} // Mantive sua variável
+                title="Aluguéis Ativos"
+                value={stats.alugueisAtivos}
                 icon={<Clock size={24} />}
               />
             </div>
           </section>
 
-          {/* Seção de Módulos do Sistema */}
           <section>
             <h2 className="text-xl font-semibold mb-4">Módulos do Sistema</h2>
             <Carousel opts={{ align: "start", slidesToScroll: 3 }} className="w-full">
@@ -89,15 +104,15 @@ export default async function DashboardPage() {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="ml-12" />
-              <CarouselNext className="mr-12" />
+              <CarouselPrevious className="-left-9" />
+              <CarouselNext className="-right-7" />
             </Carousel>
           </section>
         </div>
 
-        {/* COLUNA DA DIREITA */}
         <div className="w-full lg:w-4/12">
           <section className="h-full flex flex-col">
+            <h2 className="text-xl font-semibold mb-4">Acesso Rápido</h2>
             <div className="bg-white p-4 rounded-lg shadow-sm border flex-1">
               Botão e Lista de Devoluções aqui...
             </div>

@@ -1,57 +1,22 @@
-// Componente Input
-import React from "react";
-import { cn } from "@/lib/utils";
+import * as React from "react"
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
-  error?: boolean | string;
-  icon?: React.ReactNode;
-  iconPosition?: "left" | "right";
-}
+import { cn } from "@/lib/utils"
 
-export const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  (
-    { className, type, error = false, icon, iconPosition = "left", ...props },
-    ref
-  ) => {
+const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
+  ({ className, type, ...props }, ref) => {
     return (
-      <div className="relative">
-        {icon && iconPosition === "left" && (
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            {icon}
-          </div>
+      <input
+        type={type}
+        className={cn(
+          "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+          className
         )}
-
-        <input
-          type={type}
-          className={cn(
-            "flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm",
-            "placeholder:text-gray-400",
-            "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
-            "disabled:cursor-not-allowed disabled:opacity-50",
-            !!error && "border-red-500 focus:ring-red-500",
-            icon && iconPosition === "left" && "pl-10",
-            icon && iconPosition === "right" && "pr-10",
-            className
-          )}
-          ref={ref}
-          {...props}
-        />
-
-        {icon && iconPosition === "right" && (
-          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-            {icon}
-          </div>
-        )}
-
-        {error && props.id && (
-          <div className="mt-1 text-sm text-red-500" id={`${props.id}-error`}>
-            {props["aria-errormessage"]}
-          </div>
-        )}
-      </div>
-    );
+        ref={ref}
+        {...props}
+      />
+    )
   }
-);
+)
+Input.displayName = "Input"
 
-Input.displayName = "Input";
+export { Input }

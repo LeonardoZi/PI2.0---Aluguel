@@ -12,7 +12,7 @@ interface ModuleCardProps {
 
 export default function ModuleCard({ href, icon, title, description, iconBgColor, iconTextColor }: ModuleCardProps) {
   return (
-    <Link href={href} className="h-80 block group bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:border-emerald-500 hover:shadow-md transition-all">
+    <Link href={href} className="block group bg-white p-6 rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-200 h-80">
       <div className="flex flex-col justify-between h-full">
         <div>
           <div className={cn("h-12 w-12 rounded-lg flex items-center justify-center mb-4", iconBgColor)}>
