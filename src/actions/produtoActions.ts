@@ -31,8 +31,8 @@ export async function criarProduto(
       },
     });
 
-  } catch (error) {
-    console.error("Falha ao criar produto:", error);
+  } catch (_error) {
+    console.error("Falha ao criar produto:", _error);
     return {
       message: 'Falha no Banco de Dados: Não foi possível criar o produto.',
     };
