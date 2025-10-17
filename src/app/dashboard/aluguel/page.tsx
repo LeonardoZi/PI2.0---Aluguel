@@ -7,7 +7,7 @@ import Link from "next/link";
 
 async function getAluguel(): Promise<{ id: string; quantidade: number }[]> {
     try {
-        const alugueis = await prisma.Aluguel.findMany({
+    const alugueis = await prisma.aluguel.findMany({
             orderBy: {
                 createdAt: 'desc',
             },
