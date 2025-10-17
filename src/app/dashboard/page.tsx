@@ -17,7 +17,6 @@ async function getDashboardStats() {
       totalEmEstoque,
       alugueisAtivos,
     ] = await Promise.all([
-      // A lógica de receita mensal provavelmente continua válida.
       prisma.aluguel.aggregate({ 
         _sum: { totalPrice: true }, 
         where: { 
