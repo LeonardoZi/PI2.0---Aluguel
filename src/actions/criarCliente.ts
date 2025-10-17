@@ -24,11 +24,11 @@ export async function criarCliente(formData: FormData) {
     try {
         const novoCliente = await prisma.cliente.create({
             data: {
-                nome,
-                email,
+                name: nome,
+                Email: email,
                 cpf,
                 phone,
-                endereco: endereco,
+                adress: endereco,
             },
         });
         return { success: true, cliente: novoCliente };
