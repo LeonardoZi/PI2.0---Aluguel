@@ -2,7 +2,11 @@ import prisma from "@/lib/prisma"
 import { PlusCircle } from "lucide-react";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+    title: "Aluguéis",
+};
 
 
 async function getAluguel(): Promise<{ id: string; quantidade: number }[]> {

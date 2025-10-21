@@ -3,6 +3,11 @@ import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { ActionsMenu } from "@/components/ActionsMenu";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Produtos",
+}
 
 async function getProdutos() {
   try {

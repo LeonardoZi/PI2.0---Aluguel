@@ -1,3 +1,9 @@
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Novo Aluguel",
+};
+
 export default async function novoAluguelPage() {
     return (
         <div>
