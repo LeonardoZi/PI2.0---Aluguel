@@ -72,30 +72,37 @@ export default async function DashboardPage() {
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="w-full lg:w-8/12 flex flex-col gap-8">
           
-          <section>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <KpiCard
-                title="Receita Mensal"
-                value={stats.receitaMensal}
-                icon={<DollarSign size={24} />}
-                formatAsCurrency={true}
-              />
-              <KpiCard
-                title="Total em Estoque (un)"
-                value={stats.totalEmEstoque}
-                icon={<Archive size={24} />}
-              />
-              <KpiCard
-                title="Aluguéis Ativos"
-                value={stats.alugueisAtivos}
-                icon={<Clock size={24} />}
-              />
+          <section aria-labelledby="kpi-heading">
+            <h2 id="kpi-heading" className="sr-only">Indicadores de desempenho</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4" role="list">
+              <div role="listitem">
+                <KpiCard
+                  title="Receita Mensal"
+                  value={stats.receitaMensal}
+                  icon={<DollarSign size={24} />}
+                  formatAsCurrency={true}
+                />
+              </div>
+              <div role="listitem">
+                <KpiCard
+                  title="Total em Estoque (un)"
+                  value={stats.totalEmEstoque}
+                  icon={<Archive size={24} />}
+                />
+              </div>
+              <div role="listitem">
+                <KpiCard
+                  title="Aluguéis Ativos"
+                  value={stats.alugueisAtivos}
+                  icon={<Clock size={24} />}
+                />
+              </div>
             </div>
           </section>
 
-          <section>
-            <h2 className="text-xl font-semibold mb-4">Módulos do Sistema</h2>
-            <Carousel opts={{ align: "start", slidesToScroll: 3 }} className="w-full">
+          <section aria-labelledby="modules-heading">
+            <h2 id="modules-heading" className="text-xl font-semibold mb-4">Módulos do Sistema</h2>
+            <Carousel opts={{ align: "start", slidesToScroll: 3 }} className="w-full" aria-label="Carrossel de módulos do sistema">
               <CarouselContent>
                 {modulesData.map((module, index) => (
                   <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3 p-2">
@@ -103,20 +110,20 @@ export default async function DashboardPage() {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="-left-9" />
-              <CarouselNext className="-right-7" />
+              <CarouselPrevious className="-left-9" aria-label="Módulos anteriores" />
+              <CarouselNext className="-right-7" aria-label="Próximos módulos" />
             </Carousel>
           </section>
         </div>
 
-        <div className="w-full lg:w-4/12">
+        <aside className="w-full lg:w-4/12" aria-labelledby="quick-access-heading">
           <section className="h-full flex flex-col">
-            <h2 className="text-xl font-semibold mb-4">Acesso Rápido</h2>
-            <div className="bg-white p-4 rounded-lg shadow-sm border flex-1">
+            <h2 id="quick-access-heading" className="text-xl font-semibold mb-4">Acesso Rápido</h2>
+            <div className="bg-white p-4 rounded-lg shadow-sm border flex-1" role="complementary">
               Botão e Lista de Devoluções aqui...
             </div>
           </section>
-        </div>
+        </aside>
 
       </div>
     </div>

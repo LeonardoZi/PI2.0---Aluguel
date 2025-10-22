@@ -20,20 +20,28 @@ export function ActionsMenu({ produtoId }: ActionsMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
+        <Button variant="ghost" className="h-8 w-8 p-0" aria-label="Abrir menu de ações do produto">
           <span className="sr-only">Abrir menu</span>
-          <MoreHorizontal className="h-4 w-4" />
+          <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" aria-label="Menu de ações">
         <DropdownMenuItem asChild>
-          <Link href={`/dashboard/produtos/${produtoId}/editar`} className="flex items-center cursor-pointer">
-            <Pencil className="mr-2 h-4 w-4" />
+          <Link
+            href={`/dashboard/produtos/${produtoId}/editar`}
+            className="flex items-center cursor-pointer"
+            aria-label="Editar produto"
+          >
+            <Pencil className="mr-2 h-4 w-4" aria-hidden="true" />
             <span>Editar</span>
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleDelete} className="text-red-500 flex items-center cursor-pointer">
-          <Trash2 className="mr-2 h-4 w-4" />
+        <DropdownMenuItem
+          onClick={handleDelete}
+          className="text-red-500 flex items-center cursor-pointer"
+          aria-label="Excluir produto"
+        >
+          <Trash2 className="mr-2 h-4 w-4" aria-hidden="true" />
           <span>Excluir</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

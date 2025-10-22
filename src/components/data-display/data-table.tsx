@@ -1,16 +1,15 @@
-// Componente DataTable
 "use client";
 
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 
-// Componentes de tabela internos (já que os módulos externos não estão disponíveis)
 const Table = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLTableElement>) => (
   <table
     className={cn("w-full caption-bottom text-sm", className)}
+    role="table"
     {...props}
   />
 );
@@ -51,6 +50,7 @@ const TableHead = ({
       "h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
       className
     )}
+    scope="col"
     {...props}
   />
 );
@@ -65,7 +65,6 @@ const TableCell = ({
   />
 );
 
-// Botão simplificado
 const Button = ({
   className,
   variant = "default",
@@ -79,7 +78,7 @@ const Button = ({
 }) => (
   <button
     className={cn(
-      "inline-flex items-center justify-center rounded-md font-medium transition-colors",
+      "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2",
       variant === "default"
         ? "bg-primary text-primary-foreground hover:bg-primary/90"
         : "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
@@ -94,7 +93,6 @@ const Button = ({
   </button>
 );
 
-// Input simplificado
 const Input = ({
   className,
   ...props
@@ -108,7 +106,6 @@ const Input = ({
   />
 );
 
-// Ícones simples em vez de usar lucide-react
 const ChevronDown = () => <span className="ml-1">▼</span>;
 const ChevronUp = () => <span className="ml-1">▲</span>;
 const ChevronsUpDown = () => <span className="ml-1">⇕</span>;
@@ -145,7 +142,6 @@ export function DataTable<T extends Record<string, unknown>>({
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Ordenação
   const handleSort = (column: keyof T) => {
     if (sortColumn === column) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
@@ -155,7 +151,6 @@ export function DataTable<T extends Record<string, unknown>>({
     }
   };
 
-  // Filtragem por termo de busca
   const filteredData = searchTerm
     ? data.filter((item) =>
         Object.values(item).some((value: unknown) =>
@@ -164,7 +159,6 @@ export function DataTable<T extends Record<string, unknown>>({
       )
     : data;
 
-  // Ordenação dos dados
   const sortedData = sortColumn
     ? [...filteredData].sort((a, b) => {
         const aValue: unknown = a[sortColumn];
@@ -172,24 +166,20 @@ export function DataTable<T extends Record<string, unknown>>({
 
         if (aValue === bValue) return 0;
 
-        // Comparação segura com verificação de tipo
         if (typeof aValue === "string" && typeof bValue === "string") {
           const comp = aValue.localeCompare(bValue);
           return sortDirection === "asc" ? comp : -comp;
         }
 
-        // Comparação numérica
         if (typeof aValue === "number" && typeof bValue === "number") {
           return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
         }
 
-        // Comparação genérica para outros tipos
         const comparison = String(aValue) < String(bValue) ? -1 : 1;
         return sortDirection === "asc" ? comparison : -comparison;
       })
     : filteredData;
 
-  // Paginação
   const totalPages = pagination
     ? Math.ceil(sortedData.length / itemsPerPage)
     : 1;
@@ -201,7 +191,6 @@ export function DataTable<T extends Record<string, unknown>>({
       )
     : sortedData;
 
-  // Renderização do ícone de ordenação
   const getSortIcon = (column: keyof T) => {
     if (column !== sortColumn) return <ChevronsUpDown />;
     return sortDirection === "asc" ? <ChevronUp /> : <ChevronDown />;
@@ -211,19 +200,24 @@ export function DataTable<T extends Record<string, unknown>>({
     <div className="w-full space-y-4">
       {searchable && (
         <div className="relative w-full max-w-sm">
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+          <label htmlFor="table-search" className="sr-only">
+            Pesquisar na tabela
+          </label>
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden="true">
             <Search />
           </div>
           <Input
+            id="table-search"
             placeholder="Pesquisar..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
+            aria-label="Campo de pesquisa"
           />
         </div>
       )}
 
-      <div className="rounded-md border">
+      <div className="rounded-md border" role="region" aria-label="Tabela de dados">
         <Table>
           <TableHeader>
             <TableRow>
@@ -238,10 +232,24 @@ export function DataTable<T extends Record<string, unknown>>({
                       handleSort(column.accessorKey);
                     }
                   }}
+                  onKeyDown={(e) => {
+                    if (column.sortable && (e.key === 'Enter' || e.key === ' ')) {
+                      e.preventDefault();
+                      handleSort(column.accessorKey);
+                    }
+                  }}
+                  tabIndex={column.sortable ? 0 : undefined}
+                  aria-sort={
+                    column.sortable && sortColumn === column.accessorKey
+                      ? sortDirection === "asc"
+                        ? "ascending"
+                        : "descending"
+                      : undefined
+                  }
                 >
                   <div className="flex items-center">
                     {column.header}
-                    {column.sortable && getSortIcon(column.accessorKey)}
+                    {column.sortable && <span aria-hidden="true">{getSortIcon(column.accessorKey)}</span>}
                   </div>
                 </TableHead>
               ))}
@@ -253,6 +261,7 @@ export function DataTable<T extends Record<string, unknown>>({
                 <TableCell
                   colSpan={columns.length}
                   className="h-24 text-center"
+                  role="cell"
                 >
                   Nenhum resultado encontrado.
                 </TableCell>
@@ -261,8 +270,16 @@ export function DataTable<T extends Record<string, unknown>>({
               paginatedData.map((item, index) => (
                 <TableRow
                   key={index}
-                  className={onRowClick ? "cursor-pointer hover:bg-muted" : ""}
+                  className={onRowClick ? "cursor-pointer hover:bg-muted focus-within:bg-muted" : ""}
                   onClick={() => onRowClick && onRowClick(item)}
+                  onKeyDown={(e) => {
+                    if (onRowClick && (e.key === 'Enter' || e.key === ' ')) {
+                      e.preventDefault();
+                      onRowClick(item);
+                    }
+                  }}
+                  tabIndex={onRowClick ? 0 : undefined}
+                  role={onRowClick ? "button" : undefined}
                 >
                   {columns.map((column) => (
                     <TableCell key={String(column.accessorKey)}>
@@ -279,8 +296,8 @@ export function DataTable<T extends Record<string, unknown>>({
       </div>
 
       {pagination && totalPages > 1 && (
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">
+        <nav className="flex items-center justify-between" aria-label="Navegação de páginas da tabela">
+          <div className="text-sm text-muted-foreground" role="status" aria-live="polite">
             Mostrando {(currentPage - 1) * itemsPerPage + 1} a{" "}
             {Math.min(currentPage * itemsPerPage, sortedData.length)} de{" "}
             {sortedData.length} resultados
@@ -291,10 +308,12 @@ export function DataTable<T extends Record<string, unknown>>({
               size="sm"
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
+              aria-label="Página anterior"
             >
               <ChevronLeft />
+              <span className="sr-only">Anterior</span>
             </Button>
-            <div className="text-sm font-medium">
+            <div className="text-sm font-medium" aria-current="page">
               Página {currentPage} de {totalPages}
             </div>
             <Button
@@ -304,11 +323,13 @@ export function DataTable<T extends Record<string, unknown>>({
                 setCurrentPage((prev) => Math.min(prev + 1, totalPages))
               }
               disabled={currentPage === totalPages}
+              aria-label="Próxima página"
             >
               <ChevronRight />
+              <span className="sr-only">Próxima</span>
             </Button>
           </div>
-        </div>
+        </nav>
       )}
     </div>
   );

@@ -1,4 +1,3 @@
-// Componente Sidebar
 "use client";
 
 import Link from "next/link";
@@ -6,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
-// Componentes de ícones SVG nativos
 const HomeIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -183,14 +181,12 @@ interface NavItem {
 export function Sidebar({ open }: SidebarProps) {
   const pathname = usePathname();
 
-  // Estado para acompanhar quais submenus estão expandidos
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({
     "/products": true,
     "/purchases": false,
     "/sales": false,
   });
 
-  // Alternar estado expandido de um item
   const toggleExpand = (href: string) => {
     setExpandedItems((prev) => ({
       ...prev,
@@ -198,12 +194,10 @@ export function Sidebar({ open }: SidebarProps) {
     }));
   };
 
-  // Verificar se um item está ativo (rota atual)
   const isActive = (href: string) => {
     return pathname === href || pathname.startsWith(`${href}/`);
   };
 
-  // Itens de navegação
   const navItems: NavItem[] = [
     {
       title: "Dashboard",
@@ -272,7 +266,6 @@ export function Sidebar({ open }: SidebarProps) {
         <ul className="space-y-1 px-2">
           {navItems.map((item) => (
             <li key={item.href}>
-              {/* Item principal */}
               <div className="relative">
                 <Link
                   href={item.submenu ? "#" : item.href}
@@ -309,7 +302,6 @@ export function Sidebar({ open }: SidebarProps) {
                 </Link>
               </div>
 
-              {/* Submenu */}
               {item.submenu && expandedItems[item.href] && open && (
                 <ul className="mt-1 ml-8 space-y-1">
                   {item.submenu.map((subitem) => (
