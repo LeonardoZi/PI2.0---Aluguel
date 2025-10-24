@@ -39,7 +39,13 @@ model Cliente {
   Email String @unique
   cpf String @unique
   phone String?
-  adress String?
+  cep String?
+  logradouro String?
+  numero String?
+  complemento String?
+  bairro String?
+  cidade String?
+  estado String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

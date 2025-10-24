@@ -1,6 +1,6 @@
 "use client";
 import { criarCliente } from "@/actions/criarCliente";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 interface EnderecoData {
   logradouro: string;
@@ -8,6 +8,16 @@ interface EnderecoData {
   localidade: string;
   uf: string;
 }
+
+const formatCPF = (value: string) => {
+  const numbers = value.replace(/\D/g, "");
+
+  return numbers
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d{1,2})/, '$1-$2')
+    .slice(0, 14);
+};
 
 export default function NovoClientePage() {
   const [mensagem, setMensagem] = useState<string | null>(null);
@@ -23,6 +33,7 @@ export default function NovoClientePage() {
   });
   const [buscandoCep, setBuscandoCep] = useState(false);
   const [cepErro, setCepErro] = useState<string | null>(null);
+  const [cpf, setCpf] = useState("");
 
   const formatCep = (value: string) => {
     const numbers = value.replace(/\D/g, "");
@@ -75,6 +86,13 @@ export default function NovoClientePage() {
     }
   };
 
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedCpf = formatCPF(e.target.value);
+    setCpf(formattedCpf);
+  };
+
   const handleCepChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatCep(e.target.value);
     setCep(formatted);
@@ -90,6 +108,9 @@ export default function NovoClientePage() {
     setErros(null);
 
     const formData = new FormData(event.currentTarget);
+
+    const unmaskedCpf = cpf.replace(/\D/g, "");
+    formData.set("cpf", unmaskedCpf);
     
     const enderecoCompleto = `${endereco.logradouro}, ${endereco.numero}${endereco.complemento ? ', ' + endereco.complemento : ''} - ${endereco.bairro}, ${endereco.cidade}/${endereco.estado}`;
     formData.set("endereco", enderecoCompleto);
@@ -97,7 +118,8 @@ export default function NovoClientePage() {
     const result = await criarCliente(formData);
     if (result.success) {
       setMensagem("Cliente criado com sucesso!");
-      event.currentTarget.reset();
+      formRef.current?.reset();
+      setCpf("");
       setCep("");
       setEndereco({
         logradouro: "",
@@ -120,7 +142,7 @@ export default function NovoClientePage() {
       </div>
 
   <div className="bg-white p-4 rounded-lg shadow-sm border max-w-md mx-auto">
-    <form className="flex flex-col gap-4" onSubmit={handleSubmit} aria-label="Formulário de cadastro de cliente">
+    <form ref={formRef} className="flex flex-col gap-4" onSubmit={handleSubmit} aria-label="Formulário de cadastro de cliente">
           <div>
             <label htmlFor="nome" className="block font-medium mb-1">Nome</label>
             <input
@@ -163,6 +185,8 @@ export default function NovoClientePage() {
               minLength={14}
               maxLength={14}
               placeholder="111.111.111-11"
+              value={cpf}
+              onChange={handleCpfChange}
               aria-required="true"
               aria-invalid={erros?.cpf ? "true" : "false"}
               aria-describedby={erros?.cpf ? "cpf-error" : undefined}

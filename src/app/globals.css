@@ -44,9 +44,14 @@
   }
 
   ::selection {
-    background-color: hsl(var(--primary));
-    color: hsl(var(--primary-foreground));
+    background-color: #3b82f6;
+    color: white;
   }
+
+  ::-moz-selection {
+  background-color: #3b82f6;
+  color: white;
+}
 
   @media (prefers-reduced-motion: reduce) {
     *,

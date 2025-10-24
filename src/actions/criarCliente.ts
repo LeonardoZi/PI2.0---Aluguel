@@ -6,7 +6,7 @@ import { z } from "zod";
 const clienteSchema = z.object({
     nome: z.string().min(3, { message: "O nome deve ter no mínimo 3 caracteres."}),
     email: z.string().email({ message: "Email inválido."}),
-    cpf: z.string().length(14, { message: "O CPF deve ter 14 caracteres."}),
+    cpf: z.string().length(11, { message: "O CPF deve ter 14 caracteres."}),
     phone: z.string().min(10, { message: "O telefone deve ter no mínimo 10 caracteres."}),
     endereco: z.string().optional(),
 });
@@ -28,7 +28,6 @@ export async function criarCliente(formData: FormData) {
                 Email: email,
                 cpf,
                 phone,
-                adress: endereco,
             },
         });
         return { success: true, cliente: novoCliente };
